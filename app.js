@@ -11,10 +11,12 @@ app.use(bodyParser.json());
 
 
 const categorieRoutes = require('./src/routes/categorie');
-
+const produitRoutes = require('./src/routes/produit');
+const clientRoutes = require('./src/routes/client');
 
 app.use('/api/categories', categorieRoutes);
-
+app.use('/api/produits', produitRoutes);
+app.use('/api/clients', clientRoutes);
 
 const port = env.PORT || 3000;
 const hostname = env.HOSTNAME || 'localhost';
