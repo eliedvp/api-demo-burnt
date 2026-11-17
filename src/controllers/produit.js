@@ -1,5 +1,8 @@
 const { Produit } = require("../models/produit");
 const { gererErreur } = require("../utils/gererErreur");
+const { choisirChamps } = require("../utils/choisirChamps");
+
+const CHAMPS_PRODUIT = ["nom", "description", "prix", "quantite", "categorie"];
 
 exports.enregistrerProduit = async (req, res) => {
     try {
@@ -34,7 +37,7 @@ exports.supprimerProduit = async (req, res) => {
 
 exports.modifierProduit = async (req, res) => {
     try {
-        const produit = await Produit.findByIdAndUpdate(req.params.id, req.body ?? {}, { new: true, runValidators: true });
+        const produit = await Produit.findByIdAndUpdate(req.params.id, choisirChamps(req.body, CHAMPS_PRODUIT), { new: true, runValidators: true });
         if (!produit) {
             return res.status(404).json({ message: "Produit introuvable" });
         }

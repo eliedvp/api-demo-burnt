@@ -3,6 +3,8 @@
 API REST construite avec Express et Mongoose pour gérer un petit catalogue :
 des **catégories**, des **produits** rattachés à une catégorie et des **clients**.
 
+> **API de démonstration sans authentification** : toutes les routes sont publiques. Ne pas la déployer avec des données réelles.
+
 ## Fonctionnalités
 
 - CRUD (création, liste, modification, suppression) pour les catégories, produits et clients

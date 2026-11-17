@@ -132,6 +132,32 @@ describe("Clients", () => {
 
         expect(res.status).toBe(404);
     });
+
+    it("ignore les opérateurs MongoDB et les champs inconnus lors d'une modification", async () => {
+        jest.spyOn(Client, "findByIdAndUpdate").mockResolvedValue({ telephone: "0102030405" });
+
+        const res = await request(app)
+            .put(`/api/clients/modifier-client/${idValide}`)
+            .send({ telephone: "0102030405", $unset: { email: "" }, $rename: { nom: "x" }, dateCreation: "2000-01-01", role: "admin" });
+
+        expect(res.status).toBe(200);
+        expect(Client.findByIdAndUpdate).toHaveBeenCalledWith(
+            idValide,
+            { telephone: "0102030405" },
+            { new: true, runValidators: true }
+        );
+    });
+
+    it("ignore les champs inconnus lors d'une création", async () => {
+        jest.spyOn(Client, "create").mockResolvedValue({ nom: "Kouassi" });
+
+        const res = await request(app)
+            .post("/api/clients/enregistrer-client")
+            .send({ nom: "Kouassi", prenom: "Ama", email: "ama@example.com", $unset: { email: "" }, role: "admin" });
+
+        expect(res.status).toBe(201);
+        expect(Client.create).toHaveBeenCalledWith({ nom: "Kouassi", prenom: "Ama", email: "ama@example.com" });
+    });
 });
 
 describe("Produits", () => {
@@ -161,5 +187,20 @@ describe("Produits", () => {
 
         expect(res.status).toBe(200);
         expect(res.body.message).toBe("Produit supprimé");
+    });
+
+    it("ignore les opérateurs MongoDB lors d'une modification", async () => {
+        jest.spyOn(Produit, "findByIdAndUpdate").mockResolvedValue({ prix: 1500 });
+
+        const res = await request(app)
+            .put(`/api/produits/modifier-produit/${idValide}`)
+            .send({ prix: 1500, $unset: { categorie: "" } });
+
+        expect(res.status).toBe(200);
+        expect(Produit.findByIdAndUpdate).toHaveBeenCalledWith(
+            idValide,
+            { prix: 1500 },
+            { new: true, runValidators: true }
+        );
     });
 });

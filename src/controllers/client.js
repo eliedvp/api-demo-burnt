@@ -1,9 +1,12 @@
 const { Client } = require("../models/client");
 const { gererErreur } = require("../utils/gererErreur");
+const { choisirChamps } = require("../utils/choisirChamps");
+
+const CHAMPS_CLIENT = ["nom", "prenom", "email", "telephone"];
 
 exports.enregistrerClient = async (req, res) => {
     try {
-        const client = await Client.create(req.body ?? {});
+        const client = await Client.create(choisirChamps(req.body, CHAMPS_CLIENT));
         res.status(201).json({ message: "Client enregistré", data: client });
     } catch (error) {
         gererErreur(res, error);
@@ -33,7 +36,7 @@ exports.supprimerClient = async (req, res) => {
 
 exports.modifierClient = async (req, res) => {
     try {
-        const client = await Client.findByIdAndUpdate(req.params.id, req.body ?? {}, { new: true, runValidators: true });
+        const client = await Client.findByIdAndUpdate(req.params.id, choisirChamps(req.body, CHAMPS_CLIENT), { new: true, runValidators: true });
         if (!client) {
             return res.status(404).json({ message: "Client introuvable" });
         }
