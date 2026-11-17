@@ -1,0 +1,17 @@
+# Dépendances
+node_modules/
+
+# Variables d'environnement (ne jamais versionner de secrets)
+.env
+.env.*
+!.env.example
+
+# Logs et couverture
+npm-debug.log*
+logs/
+coverage/
+
+# Systèmes / éditeurs
+.DS_Store
+Thumbs.db
+.vscode/
