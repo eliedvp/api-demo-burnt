@@ -1,11 +1,11 @@
 const { Categorie } = require("../models/categorie");
+const { gererErreur } = require("../utils/gererErreur");
 
 
 
 exports.enregistrerCategorie = async (req, res) => {
     try {
-        // console.log(req.body);
-        const { libelle , description } = req.body;
+        const { libelle , description } = req.body ?? {};
 
         const nouvelleCategorieEnregistree = await Categorie.create({
             libelle,
@@ -19,7 +19,7 @@ exports.enregistrerCategorie = async (req, res) => {
         
 
     } catch (error) {
-
+        return gererErreur(res, error);
     }
 }
 
@@ -36,20 +36,24 @@ exports.listerCategories = async (req, res) => {
 
 
     } catch (error) {
-        
+        return gererErreur(res, error);
     }
 }
 
 exports.supprimerCategorie = async (req, res) => {
     try {
         const { id } = req.params;
-        await Categorie.findByIdAndDelete(id);
+        const categorieSupprimee = await Categorie.findByIdAndDelete(id);
+
+        if (!categorieSupprimee) {
+            return res.status(404).json({ message: "Catégorie introuvable" });
+        }
 
         return res.status(200).json({
             message: "Catégorie supprimée avec succès"
         }); 
     } catch (error) {
-        
+        return gererErreur(res, error);
     }   
 }
 
@@ -57,16 +61,21 @@ exports.supprimerCategorie = async (req, res) => {
 exports.modifierCategorie = async (req, res) => {
     try {
         const { id } = req.params;
-        const { libelle , description } = req.body;
+        const { libelle , description } = req.body ?? {};
         const categorieModifiee = await Categorie.findByIdAndUpdate(id, {
             libelle,
             description
-        }, { new: true });
+        }, { new: true, runValidators: true });
+
+        if (!categorieModifiee) {
+            return res.status(404).json({ message: "Catégorie introuvable" });
+        }
+
         return res.status(200).json({
             message: "Catégorie modifiée avec succès",
             data: categorieModifiee
         });
     } catch (error) {
-        
+        return gererErreur(res, error);
     }
 }
